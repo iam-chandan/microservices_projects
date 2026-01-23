@@ -27,9 +27,10 @@ public class InventoryController {
 	}
 	
 	@PutMapping("/update/{productId}")
-	public ResponseEntity<String> updateInventory(@PathVariable String productId,int qty){
-		inventoryService.updateInventory(productId,qty);
-		return ResponseEntity.ok("Inventory updated successfully for product : " + productId);
+	public ResponseEntity<Boolean> updateInventory(@PathVariable String productId,int qty){
+		boolean flag = inventoryService.updateInventory(productId,qty);
+		System.out.println( flag ? "Inventory updated successfully for product : " + productId : "");
+		return ResponseEntity.ok(flag);
 	}
 	
 }

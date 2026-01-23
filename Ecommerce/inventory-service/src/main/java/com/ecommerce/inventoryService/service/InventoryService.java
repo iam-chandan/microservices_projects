@@ -30,7 +30,7 @@ public class InventoryService {
 		return inventoryRepository.save(invEntity).getId();
 	}
 
-	public void updateInventory(String productId, int qty) {
+	public boolean updateInventory(String productId, int qty) {
 		InventoryEntity inventory = inventoryRepository.findByProductId(productId)
 				.orElseThrow(() -> new RuntimeException("Inventory is not part of product : " + productId));
 		
@@ -42,7 +42,8 @@ public class InventoryService {
 		
 		inventory.setQuentity(quentity);
 		inventory.setStatus(quentity > 0 ? "IN_STOCK" : "OUT_OF_STOCK");
-		inventoryRepository.save(inventory);
+		InventoryEntity inveEntity = inventoryRepository.save(inventory);
+		return inveEntity.getId() != 0;
 	}
 
 }

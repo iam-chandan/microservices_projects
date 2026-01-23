@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.ecommerce.orderService.client.CartClient;
+import com.ecommerce.orderService.client.InventoryClient;
 import com.ecommerce.orderService.dto.CartResponse;
 import com.ecommerce.orderService.dto.OrderItemResponse;
 import com.ecommerce.orderService.dto.OrderRequest;
@@ -26,6 +27,7 @@ public class OrderService {
 	private final OrderRepository orderRepository;
 	private final OrderItemRepository orderItemRepository;
 	private final CartClient cartClient;
+	private final InventoryClient inventoryClient;
 
 	@Transactional
 	public String createOrder(OrderRequest request) {
@@ -44,6 +46,9 @@ public class OrderService {
 		order.setItems(items);
 
 		orderRepository.save(order);
+		
+		items.stream().map(i -> inventoryClient.updateInventory(i.getProductId(), i.getQuantity()));
+		
 		return orderId;
 	}
 

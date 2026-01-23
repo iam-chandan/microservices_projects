@@ -1,0 +1,45 @@
+server:
+  port: 8086
+spring:
+  application:
+    name: order-service
+
+  profiles:
+    active: dev
+
+  config:
+    import: configserver:http://localhost:8888
+
+  cloud:
+    config:
+      fail-fast: true
+
+resilience4j.retry:
+  instances:
+    kafkaRetry:
+      maxAttempts: 3
+      waitDuration: 2s
+
+resilience4j.circuitbreaker:
+  instances:
+    kafkaPublisher:
+      failureRateThreshold: 50
+      slidingWindowSize: 10
+      waitDurationInOpenState: 30s
+
+resilience4j:
+  retry:
+    instances:
+      paymentServiceRetry:
+        max-attempts: 3
+        wait-duration: 2s
+  circuitbreaker:
+    instances: 
+      paymentServiceCB:
+        failure-rate-threshold: 50
+        sliding-window-size: 10
+        wait-duration-in-open-state: 10s      
+logging:
+  level:
+    io.github.resilience4j.retry: DEBUG
+    org.springframework.cloud.openfeign: DEBUG
